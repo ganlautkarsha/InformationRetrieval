@@ -8,8 +8,7 @@ def main():
 @app.route('/search', methods = ['POST'])
 def search():
     query = request.form['query']
-    print("The query '" + query + "'")
-    return query
+    return render_template('results.html',query=query)
 
 if __name__ == "__main__":
     app.run()
