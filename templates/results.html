@@ -10,8 +10,9 @@ function goBack() {
 h1 {
 		margin-top:50px;
 	}
-h3 {
-		margin-top:100px;
+div {   
+		margin-left:20px;
+		line-height: 20%;
 	}
 </style>
 </head>
@@ -21,11 +22,23 @@ h3 {
 <img src = "/static/Capture.PNG">
 </center>
 <button onclick="goBack()">Go Back</button>
-<center>
-<h1>Search Results</h1>
+<center> <h1>Search Results </h1> </center>
 <hr>
 
-<h3>{{query}}</h3>
+
+<ol>
+	
+{% for key, value in titles.items() %}
+<div>
+	<h3><a href = "{{ key }}">{{value}}</a></h3>
+    {{key}}
+</div>
+<br>
+<br>
+{% endfor %}
+
+</ol>
+
 
 </center>
 </body>
