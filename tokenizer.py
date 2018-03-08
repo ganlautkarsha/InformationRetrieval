@@ -1,5 +1,9 @@
+import pr3
 import json
+#import bs4
+import lxml as lxml
 from bs4 import BeautifulSoup
+import nltk
 import re
 
 class tokenize:
@@ -7,7 +11,6 @@ class tokenize:
     dataFolder="WEBPAGES_CLEAN/"
     bookKeepingFile=dataFolder+"bookkeeping.json"
     docIDcount=0
-    
     globalDictionary={}
     
     def parse(self):
@@ -49,6 +52,7 @@ class tokenize:
     def tokenize(self,data):
         print("in tokenize")
         print(data)
+        #nltk.download('all')
         from nltk.tokenize import word_tokenize
         tokens = word_tokenize(data)
         print(tokens)
@@ -62,6 +66,7 @@ class tokenize:
             word = re.sub('[^0-9a-zA-Z]+', '', word)
             
             #remove stop words
+
             from nltk.corpus import stopwords
             stop_words = set(stopwords.words('english'))
             
@@ -84,4 +89,5 @@ class tokenize:
         
         
 tokenizer=tokenize()
-tokenizer.parse()   
+tokenizer.parse()
+pr3.buildInvertedIndex(tokenizer.globalDictionary,2)
