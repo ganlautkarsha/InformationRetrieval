@@ -19,8 +19,8 @@ class tokenize:
             self.addToGlobalDictionary(dictionaryWordPosition,docID)
             i+=1
             print (i)
-#             if(i==2):
-#                 break
+            if(i==1):
+                break
             
     def readBookKeeping(self):
         with open(self.bookKeepingFile) as urlMappingJSON:
@@ -30,14 +30,16 @@ class tokenize:
     def getNextDocID(self):
         return self.docIDcount+1
     
+#     def getText(self,docID,start,end):
+        
+    
     def parseFile(self,doc,path,docID):
-#         print("******"+path+"**********")
+        print("******"+path+"**********")
         file=open(path).read()
-#         .encode('ascii', 'ignore').decode('ascii')
         
         #remove html tags
         docData = BeautifulSoup(file, 'lxml').get_text()
-        dictFileWordPosition={}
+#         dictFileWordPosition={}
         if docData:
             return self.tokenize(docData)
             
@@ -49,7 +51,12 @@ class tokenize:
             currentval.append({docID:positions})
             self.globalDictionary[word]=currentval
 #         print(self.globalDictionary)
-        
+
+    def getURL(self,docID):
+        json=self.readBookKeeping()
+        print(docID)
+        return json[str(docID)]
+    
     def tokenize(self,data):
         print("in tokenize")
 #         print(data)
@@ -72,18 +79,24 @@ class tokenize:
                 continue
             
             #stemming
-            from nltk.stem.porter import PorterStemmer#, WordNetLemmatizer
-            porter = PorterStemmer()
+#             from nltk.stem.porter import PorterStemmer#, WordNetLemmatizer
+#             porter = PorterStemmer()
+#             word = porter.stem(word)
 #             lemmatiser = WordNetLemmatizer()
 #             word=lemmatiser.lemmatize(word)
-            word = porter.stem(word)
-                       
+            
+            
+            from nltk.stem import SnowballStemmer
+            snowball_Stemmer=SnowballStemmer("english")
+            word=snowball_Stemmer.stem(word)
             #store word and position in dictionary
             positions=dictTokenPosition.get(word,[])
             positions.append(i)
             dictTokenPosition[word]=positions
                 
+        print(dictTokenPosition)
         return dictTokenPosition
         
 tokenizer=tokenize()
 tokenizer.parse()   
+# print(tokenizer.getURL("0/100"))
