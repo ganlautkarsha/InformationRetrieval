@@ -1,9 +1,5 @@
-import pr3
 import json
-#import bs4
-import lxml as lxml
 from bs4 import BeautifulSoup
-import nltk
 import re
 
 class tokenize:
@@ -11,6 +7,7 @@ class tokenize:
     dataFolder="WEBPAGES_CLEAN/"
     bookKeepingFile=dataFolder+"bookkeeping.json"
     docIDcount=0
+    
     globalDictionary={}
     
     def parse(self):
@@ -21,8 +18,9 @@ class tokenize:
             dictionaryWordPosition=self.parseFile(doc,path,docID)
             self.addToGlobalDictionary(dictionaryWordPosition,docID)
             i+=1
-            if(i==2):
-                break
+            print (i)
+#             if(i==2):
+#                 break
             
     def readBookKeeping(self):
         with open(self.bookKeepingFile) as urlMappingJSON:
@@ -33,8 +31,9 @@ class tokenize:
         return self.docIDcount+1
     
     def parseFile(self,doc,path,docID):
-        print("******"+path+"**********")
-        file=open(path).read().decode("ascii","ignore").encode("ascii")
+#         print("******"+path+"**********")
+        file=open(path).read()
+#         .encode('ascii', 'ignore').decode('ascii')
         
         #remove html tags
         docData = BeautifulSoup(file, 'lxml').get_text()
@@ -43,30 +42,29 @@ class tokenize:
             return self.tokenize(docData)
             
     def addToGlobalDictionary(self,dictionaryWordPosition,docID):
+        if dictionaryWordPosition==None:
+            return
         for word,positions in dictionaryWordPosition.items():
             currentval=self.globalDictionary.get(word,[])
             currentval.append({docID:positions})
             self.globalDictionary[word]=currentval
-        print(self.globalDictionary)
+#         print(self.globalDictionary)
         
     def tokenize(self,data):
         print("in tokenize")
-        print(data)
-        #nltk.download('all')
+#         print(data)
         from nltk.tokenize import word_tokenize
         tokens = word_tokenize(data)
-        print(tokens)
+#         print(tokens)
         dictTokenPosition={}
         for i in range(len(tokens)):
-            
             #convert to lower case
-            word=str(tokens[i].lower())
+            word=str(tokens[i].lower().encode("ascii","replace"))
             
             #keep only alpha num characters
             word = re.sub('[^0-9a-zA-Z]+', '', word)
             
             #remove stop words
-
             from nltk.corpus import stopwords
             stop_words = set(stopwords.words('english'))
             
@@ -87,7 +85,5 @@ class tokenize:
                 
         return dictTokenPosition
         
-        
 tokenizer=tokenize()
-tokenizer.parse()
-pr3.buildInvertedIndex(tokenizer.globalDictionary,2)
+tokenizer.parse()   
