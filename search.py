@@ -1,4 +1,4 @@
-import urllib2
+import urllib2, re
 import tokenizer
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, request, redirect
@@ -13,11 +13,7 @@ def search():
     query = request.form['query']
     url_list = tokenizer.getqueryResult(query)
     url_list = ["https://" + s for s in url_list]
-    titles = {}
-    for item in url_list:
-    	title_soup = BeautifulSoup(urllib2.urlopen(item))
-    	titles[item] = title_soup.title.string
-    return render_template('results.html',titles = titles)
+    return render_template('results.html',url_list = url_list)
 
 if __name__ == "__main__":
     app.run()
