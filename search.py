@@ -13,7 +13,7 @@ def search():
     query = request.form['query']
     url_list = tokenizer.getqueryResult(query)
     url_list = ["https://" + s for s in url_list]
-    return render_template('results.html',url_list = url_list)
+    return render_template('results1.html',query = query, url_list = url_list)
 
 if __name__ == "__main__":
     app.run()
