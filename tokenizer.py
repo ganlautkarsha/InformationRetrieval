@@ -61,8 +61,8 @@ class tokenize:
     
     
     def processQuery(self,query):
-        tokens = tokenize(query).keys()
-    
+        queryTokens = self.tokenize(query).keys()
+        return queryTokens
     
     def tokenize(self,data):
         print("in tokenize")
@@ -112,6 +112,8 @@ class tokenize:
         return dictTokenPosition
         
 tokenizer=tokenize()
-tokenizer.parse()
+# tokenizer.parse()
+print(tokenizer.processQuery("graduate courses at UCI"))
+
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
