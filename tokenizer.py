@@ -1,7 +1,7 @@
 import json
 from bs4 import BeautifulSoup
 import re
-import pr3
+import indexBuild
 from nltk.tokenize import word_tokenize
 
 class tokenize:
@@ -94,26 +94,46 @@ class tokenize:
             # porter = PorterStemmer()
             # word = porter.stem(word)
             
-            from nltk.stem import WordNetLemmatizer
-            lemmatiser = WordNetLemmatizer()
-            word=lemmatiser.lemmatize(word)
+            # from nltk.stem import WordNetLemmatizer
+            # lemmatiser = WordNetLemmatizer()
+            # word=lemmatiser.lemmatize(word)
             
             
-#             from nltk.stem import SnowballStemmer
-#             snowball_Stemmer=SnowballStemmer("english")
-#             word=snowball_Stemmer.stem(word)
+            from nltk.stem import SnowballStemmer
+            snowball_Stemmer=SnowballStemmer("english")
+            word=snowball_Stemmer.stem(word)
             
             # store word and position in dictionary
             positions=dictTokenPosition.get(word,[])
             positions.append(i)
-            dictTokenPosition[word]=positions
+            dictTokenPosition[str(word)]=positions
                 
-        print(dictTokenPosition)
+        # print(dictTokenPosition)
         return dictTokenPosition
         
 tokenizer=tokenize()
-# tokenizer.parse()
-print(tokenizer.processQuery("graduate courses at UCI"))
+# # tokenizer.parse()
+# print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
+s=indexBuild.Searcher('tf-idf.txt','linecount.txt')
+def getqueryResult(queryterms):
+    stemmed = tokenizer.processQuery(queryterms)
+    print stemmed
+    queryresult = indexBuild.querymatch(s,stemmed)
+    count=0
+    returnlist=[]
+    for items in queryresult:
+        if count>=5:
+            break
+        count+=1
+        returnlist.append(tokenizer.getURL(items[0]))
+    #print returnlist
+    return returnlist
+
+getqueryResult('crista lopes')
+getqueryResult('andrea')
+getqueryResult('graduate courses')
+getqueryResult('software engineering')
+getqueryResult('security')
