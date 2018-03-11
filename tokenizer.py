@@ -1,7 +1,7 @@
 import json
 from bs4 import BeautifulSoup
 import re
-
+import pr3
 class tokenize:
     
     dataFolder="WEBPAGES_CLEAN/"
@@ -17,9 +17,9 @@ class tokenize:
             path=self.dataFolder+docID
             dictionaryWordPosition=self.parseFile(doc,path,docID)
             self.addToGlobalDictionary(dictionaryWordPosition,docID)
-            i+=1
-            print (i)
-            if(i==1):
+            self.docIDcount +=1
+            print (self.docIDcount)
+            if(self.docIDcount==10):
                 break
             
     def readBookKeeping(self):
@@ -79,17 +79,18 @@ class tokenize:
                 continue
             
             #stemming
-#             from nltk.stem.porter import PorterStemmer#, WordNetLemmatizer
-#             porter = PorterStemmer()
-#             word = porter.stem(word)
-#             lemmatiser = WordNetLemmatizer()
-#             word=lemmatiser.lemmatize(word)
+            # from nltk.stem.porter import PorterStemmer
+            # from nltk.stem import WordNetLemmatizer
+            # # porter = PorterStemmer()
+            # # word = porter.stem(word)
+            # lemmatiser = WordNetLemmatizer()
+            # word=lemmatiser.lemmatize(word)
             
             
             from nltk.stem import SnowballStemmer
             snowball_Stemmer=SnowballStemmer("english")
             word=snowball_Stemmer.stem(word)
-            #store word and position in dictionary
+            # store word and position in dictionary
             positions=dictTokenPosition.get(word,[])
             positions.append(i)
             dictTokenPosition[word]=positions
@@ -98,5 +99,6 @@ class tokenize:
         return dictTokenPosition
         
 tokenizer=tokenize()
-tokenizer.parse()   
+tokenizer.parse()
+indexBuild.buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
