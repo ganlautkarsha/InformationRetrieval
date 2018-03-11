@@ -13,7 +13,11 @@ def search():
     query = request.form['query']
     url_list = tokenizer.getqueryResult(query)
     url_list = ["https://" + s for s in url_list]
-    return render_template('results.html',url_list = url_list)
+    titles = {}
+    for item in url_list:
+    	title_soup = BeautifulSoup(urllib2.urlopen(item))
+    	titles[item] = title_soup.title.string
+    return render_template('results.html',titles = titles)
 
 if __name__ == "__main__":
     app.run()
