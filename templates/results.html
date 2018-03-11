@@ -12,7 +12,7 @@ h1 {
 	}
 div {   
 		margin-left:20px;
-		line-height: 100%;
+		line-height: 20%;
 	}
 </style>
 </head>
@@ -28,9 +28,10 @@ div {
 
 <ol>
 	
-{% for key in url_list %}
+{% for key, value in titles.items() %}
 <div>
-	<h3><a href = "{{ key }}" target="_blank">{{key}}</a></h3>
+	<h3><a href = "{{ key }}" target="_blank">{{value}}</a></h3>
+	{{key}}
 </div>
 <br>
 <br>
