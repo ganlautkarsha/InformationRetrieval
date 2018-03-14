@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function goBack() {
+    window.history.back()
+}
+</script>
+<style>
+h1 {
+		margin-top:50px;
+	}
+div {   
+		margin-left:20px;
+		line-height: 100%;
+	}
+</style>
+</head>
+<body>
+
+<center>
+<img src = "/static/Capture.PNG">
+</center>
+<button onclick="goBack()">Go Back</button>
+<center> <h1>Searching for '{{query}}' </h1></center>
+<hr>
+
+
+<ol>
+	
+{% for key in url_list %}
+<div>
+	<h3><a href = "{{ key }}" target = "_blank">{{key}}</a></h3>
+</div>
+<br>
+<br>
+{% endfor %}
+
+</ol>
+
+
+</center>
+</body>
+</html>
