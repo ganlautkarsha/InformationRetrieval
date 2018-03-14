@@ -2,6 +2,7 @@ import json
 from bs4 import BeautifulSoup
 import re
 import indexBuild
+from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 class tokenize:
@@ -9,19 +10,22 @@ class tokenize:
     dataFolder="WEBPAGES_CLEAN/"
     bookKeepingFile=dataFolder+"bookkeeping.json"
     docIDcount=0
-    
+    docIDTitleDict={}
     globalDictionary={}
+    docIDTitleMapping={}
     
     def parse(self):
         listLinkToFileMapping=self.readBookKeeping()
+        
         i=0
         for docID,doc in listLinkToFileMapping.items():
+#             docID="13/480"
             path=self.dataFolder+docID
             dictionaryWordPosition=self.parseFile(doc,path,docID)
             self.addToGlobalDictionary(dictionaryWordPosition,docID)
             self.docIDcount +=1
-            print (self.docIDcount)
-            if(self.docIDcount==10):
+#             print (self.docIDcount)
+            if(self.docIDcount==100):
                 break
             
     def readBookKeeping(self):
@@ -40,10 +44,42 @@ class tokenize:
         file=open(path).read()
         
         #remove html tags
-        docData = BeautifulSoup(file, 'lxml').get_text()
+        soupObj = BeautifulSoup(file, 'lxml')
+#         print(soupObj)
+        docData = soupObj.get_text()
 #         dictFileWordPosition={}
         if docData:
+            title=self.getTitle(soupObj)
+            self.docIDTitleMapping[docID]=title
+            print(title)
+#             index=str(soupObj).index("<body>")
+#             print("index=   "+str(str(soupObj).index("<body>")))
+#             print("TITLE: "+str(soupObj)[:index])
             return self.tokenize(docData)
+        
+    def getTitle(self,soupObj):
+        title=soupObj.find("title")
+        if(title==None):
+            title=(str(soupObj.p))
+        if("\n" in title):
+            title=title[:str(soupObj.p).index("\n")]
+        import HTMLParser
+        html = HTMLParser.HTMLParser()
+        title=html.unescape(title)
+        title = re.sub(r'<[^>]+>','',title)
+        title.replace("  ","")
+        title = re.sub('[^0-9a-zA-Z ]+', '', title)
+         
+        #remove stop words
+        from nltk.corpus import stopwords
+        stop_words = set(stopwords.words('english'))
+        lemmatiser = WordNetLemmatizer()
+        words=word_tokenize(title)
+        for word in words:
+            if word in stop_words:
+                title=title.replace(word,"")
+            title=title.replace(word,lemmatiser.lemmatize(word))
+        return title.lower()
             
     def addToGlobalDictionary(self,dictionaryWordPosition,docID):
         if dictionaryWordPosition==None:
@@ -65,7 +101,7 @@ class tokenize:
         return queryTokens
     
     def tokenize(self,data):
-        print("in tokenize")
+#         print("in tokenize")
 #         print(data)
         
         tokens = word_tokenize(data)
@@ -94,14 +130,13 @@ class tokenize:
             # porter = PorterStemmer()
             # word = porter.stem(word)
             
-            # from nltk.stem import WordNetLemmatizer
-            # lemmatiser = WordNetLemmatizer()
-            # word=lemmatiser.lemmatize(word)
+            lemmatiser = WordNetLemmatizer()
+            word=lemmatiser.lemmatize(word)
             
             
-            from nltk.stem import SnowballStemmer
-            snowball_Stemmer=SnowballStemmer("english")
-            word=snowball_Stemmer.stem(word)
+#             from nltk.stem import SnowballStemmer
+#             snowball_Stemmer=SnowballStemmer("english")
+#             word=snowball_Stemmer.stem(word)
             
             # store word and position in dictionary
             positions=dictTokenPosition.get(word,[])
@@ -112,11 +147,13 @@ class tokenize:
         return dictTokenPosition
         
 tokenizer=tokenize()
-# # tokenizer.parse()
+tokenizer.parse()
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
+
+   
 s=indexBuild.Searcher('tf-idf.txt','linecount.txt')
 def getqueryResult(queryterms):
     stemmed = tokenizer.processQuery(queryterms)
@@ -131,7 +168,7 @@ def getqueryResult(queryterms):
         returnlist.append(tokenizer.getURL(items[0]))
     #print returnlist
     return returnlist
-
+   
 getqueryResult('crista lopes')
 getqueryResult('andrea')
 getqueryResult('graduate courses')
