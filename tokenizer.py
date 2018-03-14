@@ -13,19 +13,18 @@ class tokenize:
     docIDTitleDict={}
     globalDictionary={}
     docIDTitleMapping={}
+    ngramsDict={}
     
     def parse(self):
         listLinkToFileMapping=self.readBookKeeping()
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
-#             docID="13/480"
             path=self.dataFolder+docID
             dictionaryWordPosition=self.parseFile(doc,path,docID)
             self.addToGlobalDictionary(dictionaryWordPosition,docID)
             self.docIDcount +=1
-#             print (self.docIDcount)
-            if(self.docIDcount==100):
+            if(self.docIDcount==1):
                 break
             
     def readBookKeeping(self):
@@ -35,27 +34,18 @@ class tokenize:
     
     def getNextDocID(self):
         return self.docIDcount+1
-    
-#     def getText(self,docID,start,end):
-        
+  
     
     def parseFile(self,doc,path,docID):
         print("******"+path+"**********")
         file=open(path).read()
-        
         #remove html tags
         soupObj = BeautifulSoup(file, 'lxml')
-#         print(soupObj)
         docData = soupObj.get_text()
-#         dictFileWordPosition={}
         if docData:
             title=self.getTitle(soupObj)
             self.docIDTitleMapping[docID]=title
-            print(title)
-#             index=str(soupObj).index("<body>")
-#             print("index=   "+str(str(soupObj).index("<body>")))
-#             print("TITLE: "+str(soupObj)[:index])
-            return self.tokenize(docData)
+            return self.tokenize(docData,2)
         
     def getTitle(self,soupObj):
         title=soupObj.find("title")
@@ -100,13 +90,12 @@ class tokenize:
         queryTokens = self.tokenize(query).keys()
         return queryTokens
     
-    def tokenize(self,data):
-#         print("in tokenize")
-#         print(data)
-        
+    def tokenize(self,data,k=1):
+ 
         tokens = word_tokenize(data)
 #         print(tokens)
         dictTokenPosition={}
+        listTokens=[]
         for i in range(len(tokens)):
             #convert to lower case
             word=str(tokens[i].lower().encode("ascii","replace"))
@@ -132,20 +121,32 @@ class tokenize:
             
             lemmatiser = WordNetLemmatizer()
             word=lemmatiser.lemmatize(word)
-            
+            listTokens.append(word)
             
 #             from nltk.stem import SnowballStemmer
 #             snowball_Stemmer=SnowballStemmer("english")
 #             word=snowball_Stemmer.stem(word)
-            
-            # store word and position in dictionary
-            positions=dictTokenPosition.get(word,[])
-            positions.append(i)
-            dictTokenPosition[str(word)]=positions
                 
         # print(dictTokenPosition)
+        dictTokenPosition=self.calPositions(listTokens,k)
+        print(dictTokenPosition)
         return dictTokenPosition
-        
+    
+    def calPositions(self,tokens,k):
+        # store word and position in dictionary
+        print("OOOOOOOONNNNNNNNNNCCCCCCCCCCEEEEEEEEEE")
+        dictTokenPosition={}
+        from nltk.util import ngrams
+        j=0
+        for ngram in ngrams(tokens, k):
+            groupedTokens=' '.join(str(i) for i in ngram)
+            print(groupedTokens)
+            positions=dictTokenPosition.get(groupedTokens,[])
+            positions.append(j)
+            j+=1
+            dictTokenPosition[str(groupedTokens)]=positions
+            
+        return dictTokenPosition
 tokenizer=tokenize()
 tokenizer.parse()
 # print(tokenizer.processQuery("graduate courses at UCI"))
@@ -169,8 +170,8 @@ def getqueryResult(queryterms):
     #print returnlist
     return returnlist
    
-getqueryResult('crista lopes')
-getqueryResult('andrea')
-getqueryResult('graduate courses')
-getqueryResult('software engineering')
-getqueryResult('security')
+# getqueryResult('crista lopes')
+# getqueryResult('andrea')
+# getqueryResult('graduate courses')
+# getqueryResult('software engineering')
+# getqueryResult('security')
