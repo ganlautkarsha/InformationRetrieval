@@ -12,7 +12,7 @@ h1 {
 	}
 div {   
 		margin-left:20px;
-		line-height: 100%;
+		line-height: 20%;
 	}
 </style>
 </head>
@@ -22,18 +22,21 @@ div {
 <img src = "/static/Capture.PNG">
 </center>
 <button onclick="goBack()">Go Back</button>
-<center> <h1>Searching for '{{query}}' </h1></center>
+<center> <h2>Searching for '{{query}}' </h2> </center>
 <hr>
 
 
 <ol>
 	
-{% for key in url_list %}
+{% for key in titles %}
 <div>
-	<h3><a href = "{{ key }}" target = "_blank">{{key}}</a></h3>
+	<h3><a href = "{{ key }}" target="_blank">{{titles[key][0]}}</a></h3>
+	<font color="green">{{key}}</font>
+	<br> <br>
+	<br> <br> <br>
+	<p>{{titles[key][1]}}</p>
 </div>
-<br>
-<br>
+<br><br>
 {% endfor %}
 
 </ol>
