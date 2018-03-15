@@ -22,14 +22,15 @@ class tokenize:
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
+            docID="10/330"
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
-            dictTokenPosition=self.calPositions(listTokens,1)
+#             dictTokenPosition=self.calPositions(listTokens,1)
             dictionaryNgram=self.calPositions(listTokens,2)
             
     
-            self.addToGlobalDictionary(dictTokenPosition,docID,self.globalDictionary)
+#             self.addToGlobalDictionary(dictTokenPosition,docID,self.globalDictionary)
             self.addToGlobalDictionary(dictionaryNgram,docID,self.globalDictionaryNgram)
             
             print(self.globalDictionary)
@@ -72,11 +73,12 @@ class tokenize:
             title=title[:str(soupObj.p).index("\n")]
         import HTMLParser
         html = HTMLParser.HTMLParser()
-        title=html.unescape(title)
+        title=str(html.unescape(title))
+       
         title = re.sub(r'<[^>]+>','',title)
         title.replace("  ","")
         title = re.sub('[^0-9a-zA-Z ]+', '', title)
-         
+        print("title"+title)
         #remove stop words
         from nltk.corpus import stopwords
         stop_words = set(stopwords.words('english'))
@@ -167,7 +169,7 @@ class tokenize:
     
     
 tokenizer=tokenize()
-# tokenizer.parse()
+tokenizer.parse()
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
