@@ -138,6 +138,7 @@ class tokenize:
             from nltk.stem import SnowballStemmer
             snowball_Stemmer=SnowballStemmer("english")
             word=snowball_Stemmer.stem(word)
+            listTokens.append(word)
         return listTokens
         # print(dictTokenPosition)
         
