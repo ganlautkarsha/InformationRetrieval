@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import indexBuild
 import collections
-from nltk.stem import WordNetLemmatizer
+# from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 class tokenize:
@@ -39,6 +39,11 @@ class tokenize:
             if(self.docIDcount==1):
                 break
             
+    def tokenizeQuery(self,query,k=1):
+        listTokens=self.tokenize_words(query)
+        d=self.calPositions(listTokens,k)
+        return d
+    
     def readBookKeeping(self):
         with open(self.bookKeepingFile) as urlMappingJSON:
             linkToFileMapping = json.load(urlMappingJSON)
@@ -57,7 +62,7 @@ class tokenize:
         if docData:
             title=self.getTitle(soupObj)
             self.docIDTitleMapping[str(docID)]=title
-            return self.tokenize(docData)
+            return self.tokenize_words(docData)
         
     def getTitle(self,soupObj):
         title=soupObj.find("title")
@@ -100,10 +105,11 @@ class tokenize:
     
     
     def processQuery(self,query):
-        queryTokens = self.tokenize(query).keys()
+        print(self.tokenizeQuery(query))
+        queryTokens = self.tokenizeQuery(query).keys()
         return queryTokens
     
-    def tokenize(self,data):
+    def tokenize_words(self,data):
  
         tokens = word_tokenize(data)
 #         print(tokens)
@@ -158,8 +164,10 @@ class tokenize:
             dictTokenPosition[str(groupedTokens)]=positions
             
         return dictTokenPosition
+    
+    
 tokenizer=tokenize()
-tokenizer.parse()
+# tokenizer.parse()
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
