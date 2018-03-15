@@ -75,12 +75,13 @@ class tokenize:
         #remove stop words
         from nltk.corpus import stopwords
         stop_words = set(stopwords.words('english'))
-        lemmatiser = WordNetLemmatizer()
+        from nltk.stem import SnowballStemmer
+        snowball_Stemmer=SnowballStemmer("english")
         words=word_tokenize(title)
         for word in words:
             if word in stop_words:
                 title=title.replace(word,"")
-            title=title.replace(word,lemmatiser.lemmatize(word))
+            title=title.replace(word,snowball_Stemmer.stem(word))
         return title.lower()
             
     def addToGlobalDictionary(self,dictionaryWordPosition,docID,globalDict):
