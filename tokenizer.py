@@ -22,7 +22,6 @@ class tokenize:
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
-            docID="10/330"
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
@@ -35,9 +34,9 @@ class tokenize:
             
             print(self.globalDictionary)
             print(self.globalDictionaryNgram)
-            
+            print(self.docIDCount)
             self.docIDcount +=1
-            if(self.docIDcount==1):
+            if(self.docIDcount==1000):
                 break
             
     def tokenizeQuery(self,query,k=1):
