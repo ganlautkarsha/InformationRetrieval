@@ -131,13 +131,13 @@ class tokenize:
             # porter = PorterStemmer()
             # word = porter.stem(word)
             
-            lemmatiser = WordNetLemmatizer()
-            word=lemmatiser.lemmatize(word)
-            listTokens.append(word)
+#             lemmatiser = WordNetLemmatizer()
+#             word=lemmatiser.lemmatize(word)
+#             listTokens.append(word)
             
-#             from nltk.stem import SnowballStemmer
-#             snowball_Stemmer=SnowballStemmer("english")
-#             word=snowball_Stemmer.stem(word)
+            from nltk.stem import SnowballStemmer
+            snowball_Stemmer=SnowballStemmer("english")
+            word=snowball_Stemmer.stem(word)
         return listTokens
         # print(dictTokenPosition)
         
