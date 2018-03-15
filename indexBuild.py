@@ -114,7 +114,27 @@ class Searcher:
         if found==1:
             return line
         return []
-def querymatch(s,query):
+    def findngrams(self, strings):
+        low = 0
+        high = self.length
+        string=strings.split(' ')
+        # print 'length is ' + str(high)
+        found=0
+        while low < high:
+            mid = (low + high) / 2
+            line = self.lines[mid].split()
+            # print '--', mid, line[0]
+            if line[0]==string[0] and line[1]==string[1]:
+                found=1
+                break
+            if line[0] < string[0] or (line[0] ==string[0] and line[1]<string[1]):
+                low = mid + 1
+            else:
+                high = mid
+        if found==1:
+            return line
+        return []
+def querymatch(s,query,ss):
 
     docs = []
     dict={}
@@ -131,8 +151,81 @@ def querymatch(s,query):
                 dict[currentword]+=float(words)
             else:
                 dict[currentword]=float(words)
+    count=0
+    prev=str(0)
+    for w in query:
+        if count%2==0 and count!=0:
+            line=ss.findngrams(prev+' '+w)
+            for words in line:
+                if words == line[0] or words==line[1]:
+                    continue
+                if '/' in words:
+                    currentword = words
+                    continue
+                if currentword in dict:
+                    dict[currentword] += float(words)
+                else:
+                    dict[currentword] = float(words)
+        else:
+            count+=1
+            prev=w
     sorteddict=sorted(dict.items(),key=lambda x:x[1],reverse=True)
     return sorteddict
 
+def buildNGrams(ngramsdict,numberofDocs):
+    N=numberofDocs
+    with open('ngrams.txt','w') as fp:
+        for word, value in ngramsdict.iteritems():
+            fp.write(word)
+            fp.write(' ')
+            for vals in value:
+                for w, v in vals.iteritems():
+                    fp.write(w)
+                    fp.write(' ')
+                    for item in v:
+                        # print>>fp, item
+                        fp.write(str(item) + ' ')
+                    fp.write(' -1 ')
+            fp.write('\n')
+    filesort.batch_sort('ngrams.txt', 'sortedngrams.txt')
+    linecount = 0
+    with open('ngramsweight.txt','w') as tfidf:
+    #tfidf=anydbm.open('tf-idfdb.txt','c')
+        with open('sortedngrams.txt','r') as fp:
+            #tfidf.write('Word\tDocID\ttfidf\t...\n')
+            for line in fp:
+                words = line.split(' ')
+                linetowrite = str(words[0])+' '+str(words[1])
+                count=0
+                tf=0
+                df=0
+                for w in words:
+                    if w==str('-1'):
+                        df+=1
+                idf= math.log(1 + N/df)
+                #print idf,N,df
+                docid = str(0)
+                for w in words:
+                    if w==words[0] or w==words[1]:
+                        continue
+                    if '/' in w:
+                        docid=w
+                        continue
+                    if w!=str('-1'):
+                        tf+=1
+                    if w==str('-1'):
+                        tfidfval = math.log(1+tf) * idf
+                        #print tf
+                        linetowrite += ' ' + docid + ' ' + str(round(tfidfval,5))
+                        # currentDict[words[0]]={}
+                        # currentDict[words[0]][docid]=str(round(tfidfval,5))
+                        # tfidf[words[0]]={}
 
+                        tf=0
+                # tfidf[words[0]]=linetowrite
+                tfidf.write(linetowrite)
+                tfidf.write('\n')
+                linecount+=1
+    with open('linecountngrams.txt','w') as f:
+        f.write(str(linecount))
 
