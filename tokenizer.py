@@ -34,7 +34,7 @@ class tokenize:
             
             print(self.globalDictionary)
             print(self.globalDictionaryNgram)
-            print(self.docIDCount)
+            print(self.docIDcount)
             self.docIDcount +=1
             if(self.docIDcount==1000):
                 break
