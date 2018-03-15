@@ -2,6 +2,7 @@ import json
 from bs4 import BeautifulSoup
 import re
 import indexBuild
+import collections
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
@@ -158,15 +159,20 @@ tokenizer.parse()
 s=indexBuild.Searcher('tf-idf.txt','linecount.txt')
 def getqueryResult(queryterms):
     stemmed = tokenizer.processQuery(queryterms)
-    print stemmed
+    #print stemmed
     queryresult = indexBuild.querymatch(s,stemmed)
     count=0
-    returnlist=[]
+    #returnlist=[]
+    returnlist=collections.OrderedDict()
     for items in queryresult:
         if count>=5:
             break
         count+=1
-        returnlist.append(tokenizer.getURL(items[0]))
+        #returnlist.append(tokenizer.getURL(items[0]))
+        if "http" in tokenizer.getURL(items[0]):
+            returnlist[items[0]] = tokenizer.getURL(items[0])
+        else:
+            returnlist[items[0]] = "http://"+tokenizer.getURL(items[0])
     #print returnlist
     return returnlist
    
