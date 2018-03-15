@@ -13,6 +13,7 @@ class tokenize:
     docIDcount=0
     docIDTitleDict={}
     globalDictionary={}
+    globalDictionaryNgram={}
     docIDTitleMapping={}
     ngramsDict={}
     
@@ -22,8 +23,18 @@ class tokenize:
         i=0
         for docID,doc in listLinkToFileMapping.items():
             path=self.dataFolder+docID
-            dictionaryWordPosition=self.parseFile(doc,path,docID)
-            self.addToGlobalDictionary(dictionaryWordPosition,docID)
+            
+            listTokens=self.parseFile(doc,path,docID)
+            dictTokenPosition=self.calPositions(listTokens,1)
+            dictionaryNgram=self.calPositions(listTokens,2)
+            
+    
+            self.addToGlobalDictionary(dictTokenPosition,docID,self.globalDictionary)
+            self.addToGlobalDictionary(dictionaryNgram,docID,self.globalDictionaryNgram)
+            
+            print(self.globalDictionary)
+            print(self.globalDictionaryNgram)
+            
             self.docIDcount +=1
             if(self.docIDcount==1):
                 break
@@ -45,8 +56,8 @@ class tokenize:
         docData = soupObj.get_text()
         if docData:
             title=self.getTitle(soupObj)
-            self.docIDTitleMapping[docID]=title
-            return self.tokenize(docData,2)
+            self.docIDTitleMapping[str(docID)]=title
+            return self.tokenize(docData)
         
     def getTitle(self,soupObj):
         title=soupObj.find("title")
@@ -72,18 +83,18 @@ class tokenize:
             title=title.replace(word,lemmatiser.lemmatize(word))
         return title.lower()
             
-    def addToGlobalDictionary(self,dictionaryWordPosition,docID):
+    def addToGlobalDictionary(self,dictionaryWordPosition,docID,globalDict):
         if dictionaryWordPosition==None:
             return
         for word,positions in dictionaryWordPosition.items():
-            currentval=self.globalDictionary.get(word,[])
-            currentval.append({docID:positions})
-            self.globalDictionary[word]=currentval
+            currentval=globalDict.get(word,[])
+            currentval.append({str(docID):positions})
+            globalDict[word]=currentval
 #         print(self.globalDictionary)
 
     def getURL(self,docID):
         json=self.readBookKeeping()
-        print(docID)
+#         print(docID)
         return json[str(docID)]
     
     
@@ -91,7 +102,7 @@ class tokenize:
         queryTokens = self.tokenize(query).keys()
         return queryTokens
     
-    def tokenize(self,data,k=1):
+    def tokenize(self,data):
  
         tokens = word_tokenize(data)
 #         print(tokens)
@@ -127,21 +138,18 @@ class tokenize:
 #             from nltk.stem import SnowballStemmer
 #             snowball_Stemmer=SnowballStemmer("english")
 #             word=snowball_Stemmer.stem(word)
-                
+        return listTokens
         # print(dictTokenPosition)
-        dictTokenPosition=self.calPositions(listTokens,k)
-        print(dictTokenPosition)
-        return dictTokenPosition
+        
     
     def calPositions(self,tokens,k):
         # store word and position in dictionary
-        print("OOOOOOOONNNNNNNNNNCCCCCCCCCCEEEEEEEEEE")
         dictTokenPosition={}
         from nltk.util import ngrams
         j=0
         for ngram in ngrams(tokens, k):
             groupedTokens=' '.join(str(i) for i in ngram)
-            print(groupedTokens)
+#             print(groupedTokens)
             positions=dictTokenPosition.get(groupedTokens,[])
             positions.append(j)
             j+=1
@@ -153,6 +161,7 @@ tokenizer.parse()
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
+# buildNGrams(tokenizer.globalDictionaryNgram,tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
 
    
