@@ -26,10 +26,10 @@ class tokenize:
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
+            if(listTokens==None):
+                continue
 #             dictTokenPosition=self.calPositions(listTokens,1)
             dictionaryNgram=self.calPositions(listTokens,2)
-            
-    
 #             self.addToGlobalDictionary(dictTokenPosition,docID,self.globalDictionary)
             self.addToGlobalDictionary(dictionaryNgram,docID,self.globalDictionaryNgram)
 #             
@@ -37,11 +37,13 @@ class tokenize:
 #             print(self.globalDictionaryNgram)
             print(self.docIDcount)
             self.docIDcount +=1
-            if(self.docIDcount==1000):
-                break
+#             if(self.docIDcount==1000):
+#                 break
             
     def tokenizeQuery(self,query,k=1):
         listTokens=self.tokenize_words(query)
+        if(listTokens==None):
+                return
         d=self.calPositions(listTokens,k)
         return d
     
@@ -82,7 +84,7 @@ class tokenize:
         title = re.sub(r'<[^>]+>','',title)
         title.replace("  ","")
         title = re.sub('[^0-9a-zA-Z ]+', '', title)
-        print("title"+title)
+#         print("title"+title)
         #remove stop words
         from nltk.corpus import stopwords
         stop_words = set(stopwords.words('english'))
@@ -158,6 +160,8 @@ class tokenize:
     
     def calPositions(self,tokens,k):
         # store word and position in dictionary
+        if tokens==[]:
+            return
         dictTokenPosition={}
         from nltk.util import ngrams
         j=0
