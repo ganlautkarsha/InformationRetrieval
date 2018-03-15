@@ -22,6 +22,7 @@ class tokenize:
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
+#             docID="15/338"
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
@@ -31,9 +32,9 @@ class tokenize:
     
 #             self.addToGlobalDictionary(dictTokenPosition,docID,self.globalDictionary)
             self.addToGlobalDictionary(dictionaryNgram,docID,self.globalDictionaryNgram)
-            
-            print(self.globalDictionary)
-            print(self.globalDictionaryNgram)
+#             
+#             print(self.globalDictionary)
+#             print(self.globalDictionaryNgram)
             print(self.docIDcount)
             self.docIDcount +=1
             if(self.docIDcount==1000):
@@ -67,13 +68,17 @@ class tokenize:
     def getTitle(self,soupObj):
         title=soupObj.find("title")
         if(title==None):
-            title=(str(soupObj.p))
+            title=soupObj.p
+        if (title==None):
+            return
         if("\n" in title):
             title=title[:str(soupObj.p).index("\n")]
-        import HTMLParser
-        html = HTMLParser.HTMLParser()
-        title=str(html.unescape(title))
-       
+        title=str(title)
+#         import HTMLParser
+#         print("title"+str(title))
+#         html = HTMLParser.HTMLParser()
+#         title=str(html.unescape(title))
+        
         title = re.sub(r'<[^>]+>','',title)
         title.replace("  ","")
         title = re.sub('[^0-9a-zA-Z ]+', '', title)
