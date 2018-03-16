@@ -176,16 +176,17 @@ class tokenize:
         return dictTokenPosition
     
     
-tokenizer=tokenize()
+tokenizer = tokenize()
 tokenizer.parse()
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
-# buildNGrams(tokenizer.globalDictionaryNgram,tokenizer.docIDcount)
+indexBuild.buildNGrams(tokenizer.globalDictionaryNgram, tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
 
-   
-s=indexBuild.Searcher('tf-idf.txt','linecount.txt')
+
+s = indexBuild.Searcher('tf-idf.txt', 'linecount.txt')
+ss = indexBuild.Searcher('ngramsweight2.txt', 'linecountngrams2.txt')
 def getqueryResult(queryterms):
     stemmed = tokenizer.processQuery(queryterms)
     #print stemmed

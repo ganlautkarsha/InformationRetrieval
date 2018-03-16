@@ -14,7 +14,7 @@ def buildInvertedIndex( wordDict, numberOfDocs):
     #print b
     N = numberOfDocs
     print N
-    with open('manualIndex.txt','w') as fp:
+    with open('manualIndex2.txt','w') as fp:
         for word,value in wordDict.iteritems():
             fp.write(word)
             fp.write(' ')
@@ -27,16 +27,16 @@ def buildInvertedIndex( wordDict, numberOfDocs):
                         fp.write(str(item) + ' ')
                     fp.write(' -1 ')
             fp.write('\n')
-    filesort.batch_sort('manualIndex.txt','sortedIndex.txt')
+    filesort.batch_sort('manualIndex2.txt','sortedIndex2.txt')
     currentDict={}
     # Create connection to MongoDB
     # client = MongoClient()
     # db = client['tfidf']
     # collection = db['index']
     linecount=0
-    with open('tf-idf.txt','w') as tfidf:
+    with open('tf-idf2.txt','w') as tfidf:
     #tfidf=anydbm.open('tf-idfdb.txt','c')
-        with open('sortedIndex.txt','r') as fp:
+        with open('sortedIndex2.txt','r') as fp:
             #tfidf.write('Word\tDocID\ttfidf\t...\n')
             for line in fp:
                 words = line.split(' ')
@@ -71,7 +71,7 @@ def buildInvertedIndex( wordDict, numberOfDocs):
                 tfidf.write(linetowrite)
                 tfidf.write('\n')
                 linecount+=1
-    with open('linecount.txt','w') as f:
+    with open('linecount2.txt','w') as f:
         f.write(str(linecount))
             #json.dump(currentDict,tfidf)
         # tfidf.close()
@@ -174,7 +174,7 @@ def querymatch(s,query,ss):
 
 def buildNGrams(ngramsdict,numberofDocs):
     N=numberofDocs
-    with open('ngrams.txt','w') as fp:
+    with open('ngrams2.txt','w') as fp:
         for word, value in ngramsdict.iteritems():
             fp.write(word)
             fp.write(' ')
@@ -187,11 +187,11 @@ def buildNGrams(ngramsdict,numberofDocs):
                         fp.write(str(item) + ' ')
                     fp.write(' -1 ')
             fp.write('\n')
-    filesort.batch_sort('ngrams.txt', 'sortedngrams.txt')
+    filesort.batch_sort('ngrams2.txt', 'sortedngrams2.txt')
     linecount = 0
-    with open('ngramsweight.txt','w') as tfidf:
+    with open('ngramsweight2.txt','w') as tfidf:
     #tfidf=anydbm.open('tf-idfdb.txt','c')
-        with open('sortedngrams.txt','r') as fp:
+        with open('sortedngrams2.txt','r') as fp:
             #tfidf.write('Word\tDocID\ttfidf\t...\n')
             for line in fp:
                 words = line.split(' ')
@@ -226,6 +226,18 @@ def buildNGrams(ngramsdict,numberofDocs):
                 tfidf.write(linetowrite)
                 tfidf.write('\n')
                 linecount+=1
-    with open('linecountngrams.txt','w') as f:
+    with open('linecountngrams2.txt','w') as f:
         f.write(str(linecount))
 
+
+# tokenizer = tokenize()
+# tokenizer.parse()
+# # print(tokenizer.processQuery("graduate courses at UCI"))
+#
+# # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
+# indexBuild.buildNGrams(tokenizer.globalDictionaryNgram, tokenizer.docIDcount)
+# # print(tokenizer.getURL("0/100"))
+#
+#
+# s = indexBuild.Searcher('tf-idf.txt', 'linecount.txt')
+# ss = indexBuild.Searcher('ngramsweight2.txt', 'linecountngrams2.txt')
