@@ -59,7 +59,7 @@ def getBigramText(soupObj,query,query_modified):
         for index in indices:
             if soup[index+1] == query_modified[1].lower():
                 string1 = ' '.join(str(e) for e in soup[index-3:index])
-                string2 = ' '.join(str(e) for e in soup[index+2:index+4])
+                string2 = ' '.join(str(e) for e in soup[index+2:index+5])
                 return "..."+string1, soup[index]+" "+soup[index+1], string2+"..."
                 break
         string1 = ' '.join(str(e) for e in soup[indices[0]-3:indices[0]])
