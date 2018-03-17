@@ -22,7 +22,7 @@ class tokenize:
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
-#             docID="15/338"
+#             docID="4/215"
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
@@ -37,8 +37,8 @@ class tokenize:
 #             print(self.globalDictionaryNgram)
             print(self.docIDcount)
             self.docIDcount +=1
-#             if(self.docIDcount==1000):
-#                 break
+            if(self.docIDcount==10):
+                break
             
     def tokenizeQuery(self,query,k=1):
         listTokens=self.tokenize_words(query)
@@ -64,7 +64,8 @@ class tokenize:
         docData = soupObj.get_text()
         if docData:
             title=self.getTitle(soupObj)
-            self.docIDTitleMapping[str(docID)]=title
+            self.docIDTitleMapping[str(docID)]=str(title)
+#             print("adding"+str(soupObj))
             return self.tokenize_words(docData)
         
     def getTitle(self,soupObj):
@@ -73,9 +74,11 @@ class tokenize:
             title=soupObj.p
         if (title==None):
             return
-        if("\n" in title):
-            title=title[:str(soupObj.p).index("\n")]
         title=str(title)
+        if("\n" in title):
+#             print("Removing newline")
+            title=title[:str(title).index("\n")]
+        
 #         import HTMLParser
 #         print("title"+str(title))
 #         html = HTMLParser.HTMLParser()
@@ -83,7 +86,8 @@ class tokenize:
         
         title = re.sub(r'<[^>]+>','',title)
         title.replace("  ","")
-        title = re.sub('[^0-9a-zA-Z ]+', '', title)
+#         title = re.sub('[^0-9a-zA-Z ]+', '', title)
+        title = re.sub('[^a-zA-Z ]+', '', title)
 #         print("title"+title)
         #remove stop words
         from nltk.corpus import stopwords
@@ -95,6 +99,8 @@ class tokenize:
             if word in stop_words:
                 title=title.replace(word,"")
             title=title.replace(word,snowball_Stemmer.stem(word))
+        title=title.replace("  "," ")
+        print(title)
         return title.lower()
             
     def addToGlobalDictionary(self,dictionaryWordPosition,docID,globalDict):
@@ -132,7 +138,8 @@ class tokenize:
                     continue
             
             #keep only alpha num characters
-            word = re.sub('[^0-9a-zA-Z]+', '', word)
+            word = re.sub('[^a-zA-Z]+', '', word)
+#             word = re.sub('[^0-9a-zA-Z]+', '', word)
             
             #remove stop words
             from nltk.corpus import stopwords
@@ -178,6 +185,7 @@ class tokenize:
     
 tokenizer = tokenize()
 tokenizer.parse()
+print(tokenizer.docIDTitleMapping)
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
