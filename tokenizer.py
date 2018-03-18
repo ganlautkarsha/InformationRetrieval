@@ -95,14 +95,13 @@ class tokenize:
         from nltk.stem import SnowballStemmer
         snowball_Stemmer=SnowballStemmer("english")
         words=word_tokenize(title)
+        newtitle=""
         for word in words:
             if word in stop_words:
                 title=title.replace(word,"")
-            title=title.replace(word,snowball_Stemmer.stem(word))
-            break
-        title=title.replace("  "," ")
-        print("TITLE:   "+title)
-        return title.lower()
+            newtitle+=" "+snowball_Stemmer.stem(word)
+        print("TITLE:   "+newtitle)
+        return newtitle.lower()
             
     def addToGlobalDictionary(self,dictionaryWordPosition,docID,globalDict):
         if dictionaryWordPosition==None:
