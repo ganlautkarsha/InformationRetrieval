@@ -22,7 +22,7 @@ class tokenize:
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
-#             docID="4/215"
+            docID="62/355"
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
@@ -37,7 +37,7 @@ class tokenize:
 #             print(self.globalDictionaryNgram)
             print(self.docIDcount)
             self.docIDcount +=1
-            if(self.docIDcount==10):
+            if(self.docIDcount==1):
                 break
             
     def tokenizeQuery(self,query,k=1):
@@ -75,10 +75,10 @@ class tokenize:
         if (title==None):
             return
         title=str(title)
+        
         if("\n" in title):
 #             print("Removing newline")
             title=title[:str(title).index("\n")]
-        
 #         import HTMLParser
 #         print("title"+str(title))
 #         html = HTMLParser.HTMLParser()
@@ -99,8 +99,9 @@ class tokenize:
             if word in stop_words:
                 title=title.replace(word,"")
             title=title.replace(word,snowball_Stemmer.stem(word))
+            break
         title=title.replace("  "," ")
-        print(title)
+        print("TITLE:   "+title)
         return title.lower()
             
     def addToGlobalDictionary(self,dictionaryWordPosition,docID,globalDict):
@@ -161,6 +162,7 @@ class tokenize:
             snowball_Stemmer=SnowballStemmer("english")
             word=snowball_Stemmer.stem(word)
             listTokens.append(word)
+        print(listTokens)
         return listTokens
         # print(dictTokenPosition)
         
@@ -185,7 +187,7 @@ class tokenize:
     
 tokenizer = tokenize()
 tokenizer.parse()
-print(tokenizer.docIDTitleMapping)
+print(tokenizer.globalDictionary)
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
