@@ -11,23 +11,35 @@ def getTitle(soupObj,url):
     if(title==None):
         title=(str(soupObj.p))
     if("\n" in title):
-        title=title[:str(soupObj.p).index("\n")]
-    import HTMLParser
-    html = HTMLParser.HTMLParser()
-    title=html.unescape(title)
+        title=title[:str(title).index("\n")]
+    #import HTMLParser
+    #html = HTMLParser.HTMLParser()
+    #title=html.unescape(title)
     title = re.sub(r'<[^>]+>','',title)
     title.replace("  ","")
-    title = re.sub('[^0-9a-zA-Z ]+', '', title)
+    #title = re.sub('[^0-9a-zA-Z ]+', '', title)
+    title = re.sub('[^a-zA-Z ]+', '', title)
     #remove stop words
     from nltk.corpus import stopwords
     stop_words = set(stopwords.words('english'))
-    lemmatiser = WordNetLemmatizer()
+    #lemmatiser = WordNetLemmatizer()
+    #words=word_tokenize(title)
+    #for word in words:
+    #    if word in stop_words:
+    #        title=title.replace(word,"")
+    #    title=title.replace(word,lemmatiser.lemmatize(word))
+    from nltk.stem import SnowballStemmer
+    snowball_Stemmer=SnowballStemmer("english")
     words=word_tokenize(title)
+    newtitle=""
     for word in words:
         if word in stop_words:
-            title=title.replace(word,"")
-        title=title.replace(word,lemmatiser.lemmatize(word))
-    if title.lower() != 'none':
+            # title=title.replace(word,"")
+            continue
+        newtitle+=" "+snowball_Stemmer.stem(word)
+    
+
+    if newtitle.lower() != 'none':
         return title.lower()
     else:
         return url
