@@ -22,7 +22,7 @@ class tokenize:
         
         i=0
         for docID,doc in listLinkToFileMapping.items():
-            docID="62/355"
+            # docID="62/355"
             path=self.dataFolder+docID
             
             listTokens=self.parseFile(doc,path,docID)
@@ -37,8 +37,8 @@ class tokenize:
 #             print(self.globalDictionaryNgram)
             print(self.docIDcount)
             self.docIDcount +=1
-            if(self.docIDcount==1):
-                break
+            # if(self.docIDcount==100):
+            #     break
             
     def tokenizeQuery(self,query,k=1):
         listTokens=self.tokenize_words(query)
@@ -98,7 +98,8 @@ class tokenize:
         newtitle=""
         for word in words:
             if word in stop_words:
-                title=title.replace(word,"")
+                # title=title.replace(word,"")
+                continue
             newtitle+=" "+snowball_Stemmer.stem(word)
         print("TITLE:   "+newtitle)
         return newtitle.lower()
@@ -161,7 +162,7 @@ class tokenize:
             snowball_Stemmer=SnowballStemmer("english")
             word=snowball_Stemmer.stem(word)
             listTokens.append(word)
-        print(listTokens)
+        # print(listTokens)
         return listTokens
         # print(dictTokenPosition)
         
@@ -185,21 +186,22 @@ class tokenize:
     
     
 tokenizer = tokenize()
-tokenizer.parse()
-print(tokenizer.globalDictionary)
+# tokenizer.parse()
+# print(tokenizer.globalDictionary)
 # print(tokenizer.processQuery("graduate courses at UCI"))
 
 # buildInvertedIndex(tokenizer.globalDictionary,tokenizer.docIDcount)
-indexBuild.buildNGrams(tokenizer.globalDictionaryNgram, tokenizer.docIDcount)
+# indexBuild.buildNGrams(tokenizer.globalDictionaryNgram, tokenizer.docIDcount)
 # print(tokenizer.getURL("0/100"))
-
+# indexBuild.buildTitle(tokenizer.docIDTitleMapping)
 
 s = indexBuild.Searcher('tf-idf.txt', 'linecount.txt')
 ss = indexBuild.Searcher('ngramsweight2.txt', 'linecountngrams2.txt')
+sss = indexBuild.loadDict()
 def getqueryResult(queryterms):
     stemmed = tokenizer.processQuery(queryterms)
     #print stemmed
-    queryresult = indexBuild.querymatch(s,stemmed)
+    queryresult = indexBuild.querymatch(s,stemmed,ss,sss)
     count=0
     #returnlist=[]
     returnlist=collections.OrderedDict()

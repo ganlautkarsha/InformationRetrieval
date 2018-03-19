@@ -3,6 +3,7 @@ import math
 import math
 import filesort
 import heapq
+import json
 
 #from pymongo import MongoClient
 def buildInvertedIndex( wordDict, numberOfDocs):
@@ -134,7 +135,7 @@ class Searcher:
         if found==1:
             return line
         return []
-def querymatch(s,query,ss):
+def querymatch(s,query,ss,sss):
 
     docs = []
     dict={}
@@ -151,11 +152,14 @@ def querymatch(s,query,ss):
                 dict[currentword]+=float(words)
             else:
                 dict[currentword]=float(words)
-    count=0
+    count=1
     prev=str(0)
-    for w in query:
+    print 'checking ngrams now'
+    for ww in query:
+        print ww
         if count%2==0 and count!=0:
-            line=ss.findngrams(prev+' '+w)
+            print 'finding '+prev +' '+ww
+            line=ss.findngrams(prev+' '+ww)
             for words in line:
                 if words == line[0] or words==line[1]:
                     continue
@@ -163,15 +167,33 @@ def querymatch(s,query,ss):
                     currentword = words
                     continue
                 if currentword in dict:
+                    # print 'updating '+currentword
                     dict[currentword] += float(words)
                 else:
+                    # print 'adding ' + currentword
                     dict[currentword] = float(words)
         else:
             count+=1
-            prev=w
+            prev=ww
+    q=" ".join(x for x in query)
+    for key,val in sss.items():
+        if q in val:
+            if key in dict:
+                print 'updating title for '+key
+                dict[key]+=5
+            else:
+                print 'adding title for ' + key
+                dict[key]=5
     sorteddict=sorted(dict.items(),key=lambda x:x[1],reverse=True)
     return sorteddict
-
+def buildTitle(titleDict):
+    with open('titledict.txt','w') as fp:
+        json.dump(titleDict,fp)
+def loadDict():
+    d={}
+    with open('titledict.txt','r') as fp:
+        d=json.load(fp)
+    return d
 def buildNGrams(ngramsdict,numberofDocs):
     N=numberofDocs
     with open('ngrams2.txt','w') as fp:
